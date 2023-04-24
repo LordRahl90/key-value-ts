@@ -26,7 +26,7 @@ Response:
 }
 ```
 
-To <b>GET</> the value:
+To <b>GET</b> the value:
 ```bash
 curl --location 'localhost:8080?timestamp=101&key=my-key'
 ```
