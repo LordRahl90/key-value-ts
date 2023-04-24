@@ -29,6 +29,11 @@ func New(storer storage.Storer) *Server {
 	return s
 }
 
+// Start trigger the server to start on the defined port
+func (s *Server) Start(port string) error {
+	return s.router.Run(port)
+}
+
 func (s *Server) putSequence(c *gin.Context) {
 	var req requests.Request
 
