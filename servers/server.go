@@ -2,7 +2,6 @@ package servers
 
 import (
 	"net/http"
-	"strconv"
 
 	"key-value-ts/domains/entities"
 	"key-value-ts/domains/storage"
@@ -62,18 +61,15 @@ func (s *Server) putSequence(c *gin.Context) {
 }
 
 func (s *Server) getSequence(c *gin.Context) {
-	key := c.Query("key")
-	tsStr := c.Query("timestamp")
-
-	ts, err := strconv.Atoi(tsStr)
-	if err != nil {
+	var req requests.Request
+	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
 
-	res, err := s.storer.Get(key, int64(ts))
+	res, err := s.storer.Get(req.Key, req.Timestamp)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),

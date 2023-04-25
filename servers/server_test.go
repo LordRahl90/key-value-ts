@@ -129,6 +129,7 @@ func TestGetSequence(t *testing.T) {
 	}
 	b, err := json.Marshal(req)
 	require.NoError(t, err)
+
 	request, err := http.NewRequest(http.MethodPut, "/", bytes.NewBuffer(b))
 	require.NoError(t, err)
 	server.router.ServeHTTP(rec, request)
@@ -138,9 +139,15 @@ func TestGetSequence(t *testing.T) {
 	exp := `{"message":"sequence saved successfully"}`
 	assert.Equal(t, exp, rec.Body.String())
 
-	path := fmt.Sprintf("/?key=%s&timestamp=%d", "my-key", 101)
+	req = requests.Request{
+		Key:       "my-key",
+		Timestamp: 101,
+	}
+	b, err = json.Marshal(req)
+	require.NoError(t, err)
+	require.NotNil(t, b)
 
-	request, err = http.NewRequest(http.MethodGet, path, nil)
+	request, err = http.NewRequest(http.MethodGet, "/", bytes.NewBuffer(b))
 	require.NoError(t, err)
 
 	getRec := httptest.NewRecorder()
@@ -155,9 +162,14 @@ func TestGetSequence(t *testing.T) {
 
 func TestGetSequence_NonExistent(t *testing.T) {
 	rec := httptest.NewRecorder()
-	path := fmt.Sprintf("/?key=%s&timestamp=%d", "my-key", 110)
+	req := requests.Request{
+		Key:       "my-key",
+		Timestamp: 10111,
+	}
+	b, err := json.Marshal(req)
+	require.NoError(t, err)
 
-	request, err := http.NewRequest(http.MethodGet, path, nil)
+	request, err := http.NewRequest(http.MethodGet, "/", bytes.NewBuffer(b))
 	require.NoError(t, err)
 
 	getRec := httptest.NewRecorder()
@@ -173,8 +185,8 @@ func TestGetSequence_NonExistent(t *testing.T) {
 func TestGetSequence_InvalidTimestamp(t *testing.T) {
 	rec := httptest.NewRecorder()
 
-	path := fmt.Sprintf("/?key=%s&timestamp=timestamp", "my-key")
-	request, err := http.NewRequest(http.MethodGet, path, nil)
+	req := []byte(`{"key":"my-key","value":"My Value","timestamp":"102030"}`)
+	request, err := http.NewRequest(http.MethodGet, "/", bytes.NewBuffer(req))
 	require.NoError(t, err)
 
 	getRec := httptest.NewRecorder()
@@ -183,15 +195,15 @@ func TestGetSequence_InvalidTimestamp(t *testing.T) {
 	require.NotNil(t, rec)
 
 	require.Equal(t, http.StatusBadRequest, getRec.Code)
-	exp := `{"error":"strconv.Atoi: parsing \"timestamp\": invalid syntax"}`
+	exp := `{"error":"json: cannot unmarshal string into Go struct field Request.timestamp of type int64"}`
 	assert.Equal(t, exp, getRec.Body.String())
 }
 
 func TestGetSequence_WithError(t *testing.T) {
 	rec := httptest.NewRecorder()
+	req := []byte(`{"key":"my-key","value":"My Value","timestamp":102030}`)
 
-	path := fmt.Sprintf("/?key=%s&timestamp=%d", "my-key", 101)
-	request, err := http.NewRequest(http.MethodGet, path, nil)
+	request, err := http.NewRequest(http.MethodGet, "/", bytes.NewBuffer(req))
 	require.NoError(t, err)
 
 	getRec := httptest.NewRecorder()
@@ -214,8 +226,8 @@ func TestGetSequence_WithError(t *testing.T) {
 func TestGetSequence_NoMockInitialized(t *testing.T) {
 	rec := httptest.NewRecorder()
 
-	path := fmt.Sprintf("/?key=%s&timestamp=%d", "my-key", 101)
-	request, err := http.NewRequest(http.MethodGet, path, nil)
+	req := []byte(`{"key":"my-key","value":"My Value","timestamp":102030}`)
+	request, err := http.NewRequest(http.MethodGet, "/", bytes.NewBuffer(req))
 	require.NoError(t, err)
 
 	getRec := httptest.NewRecorder()
