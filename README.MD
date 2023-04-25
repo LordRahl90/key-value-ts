@@ -11,15 +11,9 @@ This is a web API system that stores and reads timestamp sequence in a file <br 
 
 To <b>PUT</b> a sequence: 
 ```bash
-curl --location --request PUT 'localhost:8080' \
---header 'Content-Type: application/json' \
---data '{
-    "key": "my-key",
-    "value": "My Value",
-    "timestamp": 101
-}'
+curl -X PUT http://localhost:8080 -H 'Content-Type: application/json' -d '{"key": "mykey", "value": "myvalue", "timestamp" : 1673524092123456}'
 ```
-Response:
+Response [Code: 201]:
 ```json
 {
     "message": "sequence saved successfully"
@@ -28,12 +22,12 @@ Response:
 
 To <b>GET</b> the value:
 ```bash
-curl --location 'localhost:8080?timestamp=101&key=my-key'
+curl -X GET http://localhost:8080 -H 'Content-Type: application/json' -d '{"key":"mykey", "timestamp": 1673524092123456}'
 ```
-Expected Response:
+Response [Code: 200]:
 ```json
 {
-    "value": "My Value"
+    "value": "myvalue"
 }
 ```
 
