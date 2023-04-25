@@ -73,9 +73,7 @@ func (fs *FileStorer) Get(key string, timestamp int64) (string, error) {
 		if err != nil {
 			return result, err
 		}
-		// exiting here totally depends on the PUT logic.
-		// do we remove the old and replace with new,
-		// or we want an append only option
+
 		if timestamp == int64(ts) {
 			fs.saveToCache(entities.Sequence{
 				Key:       key,
