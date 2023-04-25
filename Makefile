@@ -5,7 +5,7 @@ test:
 	go test ./... --cover
 
 test-with-race:
-	go test ./... --cover --race
+	go test -race ./... --cover
 
 build:
 	docker build -t lordrahl/kvts:latest .
