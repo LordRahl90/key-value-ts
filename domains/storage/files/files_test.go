@@ -1,6 +1,7 @@
 package files
 
 import (
+	"log"
 	"os"
 	"testing"
 	"time"
@@ -124,4 +125,50 @@ func BenchmarkSave(b *testing.B) {
 	if err := os.RemoveAll(path); err != nil {
 		panic(err)
 	}
+}
+
+func BenchmarkGet(b *testing.B) {
+	table := []struct {
+		key, name string
+		timestamp int64
+	}{
+		{
+			name:      "farthest-key",
+			key:       "read",
+			timestamp: 6152146711361107039,
+		},
+		{
+			name:      "non-existent-key",
+			key:       "read",
+			timestamp: 10001,
+		},
+		{
+			name:      "last-key",
+			key:       "read",
+			timestamp: 560053162071168685,
+		},
+		{
+			name:      "early-key",
+			key:       "read",
+			timestamp: 5165520820317048201,
+		},
+	}
+
+	path := "testdata/demo/"
+	cs, err := New(path)
+	if err != nil {
+		panic(err)
+	}
+
+	for _, v := range table {
+		b.Run(v.name, func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				_, err := cs.Get(v.key, v.timestamp)
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
+		})
+	}
+
 }
