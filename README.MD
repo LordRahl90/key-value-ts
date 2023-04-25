@@ -9,6 +9,15 @@ This is a web API system that stores and reads timestamp sequence in a file <br 
 * Run `go mod tidy`
 * Run `make start`
 
+### Startup With Docker
+To use this option, please make sure docker is installed on the target machine.
+* Clone the application
+* Run `make run`
+
+
+
+
+
 To <b>PUT</b> a sequence: 
 ```bash
 curl -X PUT http://localhost:8080 -H 'Content-Type: application/json' -d '{"key": "mykey", "value": "myvalue", "timestamp" : 1673524092123456}'

@@ -1,0 +1,7 @@
+version: '3'
+services:
+  kvts:
+    container_name: kv-ts
+    image: lordrahl/kvts
+    ports:
+      - 8080:8080
