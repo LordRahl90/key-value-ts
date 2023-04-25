@@ -109,6 +109,8 @@ func (fs *FileStorer) saveToCache(e entities.Sequence) {
 }
 
 func (fs *FileStorer) fromCache(key string, timestamp int64) (*entities.Sequence, bool) {
+	fs.m.Lock()
+	defer fs.m.Unlock()
 	val, ok := fs.cache[mapKey(key, timestamp)]
 	return &val, ok
 }
